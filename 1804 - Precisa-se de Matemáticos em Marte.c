@@ -1,56 +1,42 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-int vet[100001] = {0};
-int aux[100001];
+#define N (int) 1e5+1
 
-void update(int i, int val, int tam)
-{
-    if (i > tam)
-        return;
+int aux[N];
 
-    aux[i] += val;
-
-    update(i + (i & (-i)), val, tam);
+int atualizar(int i, int val, int n)
+{ 
+    for (; i < n; i += i & -i)
+        aux[i] += val;
 }
 
-int get(int pos)
+int soma(int i)
 {
-    int soma = 0;
-
-    while (pos > 0)
-    {
-        soma += aux[pos];
-        pos -= pos & (-pos);
-    }
-
-    return soma;
+    return (i > 0) ? aux[i] + soma(i - (i & -i)) : 0;
 }
 
 int main()
 {
-    int N, i;
+    char c;
+    int i, n, vet[N] = {0};
 
-    scanf("%d", &N);
+    scanf("%d", &n);
 
     memset(aux, 0, sizeof aux);
 
-    for (i = 1; i <= N; i++)
+    for (i = 1; i <= n; i++)
     {
-        scanf(" %d", &vet[i]);
-        update(i, vet[i], N);
+        scanf("%d", &vet[i]);
+        atualizar(i, vet[i], n);
     }
 
-    char c;
-    int x;
-
-    while (scanf(" %c %d", &c, &x) == 2)
+    while(scanf(" %c%d", &c, &i) != EOF)
     {
         if (c == 'a')
-            update(x, -vet[x], N);
+            atualizar(i, -vet[i], n);
         else
-            printf("%d\n", get(x-1));
+            printf("%d\n", soma(i-1));
     }
 
     return 0;
